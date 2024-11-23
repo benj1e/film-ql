@@ -1,10 +1,12 @@
-from ..exceptions.api_exception import InvalidMethodType
+from ..errors.api_exception import InvalidMethodType
+from api.logger import get_logger
 from pprint import pprint
 from urllib.parse import quote_plus
 from dotenv import load_dotenv, find_dotenv
 import aiohttp, os
 
 load_dotenv(find_dotenv())
+logger = get_logger("TMDBApi", "omdb-api.log")
 
 
 class TMDBApi:
@@ -30,10 +32,12 @@ class TMDBApi:
 
     async def init_session(self):
         """Initialises an aiohttp session"""
+        logger.info("Initialising session")
         self.session = aiohttp.ClientSession()
 
     async def close_session(self):
         """Closes an aiohttp session."""
+        logger.info("Closing session")
         await self.session.close()
 
     async def get_session(self):

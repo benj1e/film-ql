@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from ..handler.classes import TMDBApi
-import aiohttp
+from ..errors.api_exception import InvalidMethodType
+from api.logger import get_logger
 from contextlib import asynccontextmanager
 from enum import Enum
 from slugify import slugify
@@ -13,16 +14,15 @@ class TypeParams(str, Enum):
 
 
 api = TMDBApi()
+logger = get_logger("TMDB_Router", "tmdb.log")
 
 
 @asynccontextmanager
 async def lifespan(app):
-    print("Session opened")
     await api.init_session()
     try:
         yield
     finally:
-        print("Session closed")
         await api.close_session()
 
 
@@ -32,7 +32,6 @@ router = APIRouter(prefix="/movies", lifespan=lifespan)
 @router.get("/")
 async def get_movie(q: int | str):
     """Gets a single movie with its details from the API"""
-
     movie = await api.get(q)
     return {"movie": movie}
 
