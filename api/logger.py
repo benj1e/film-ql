@@ -35,7 +35,7 @@ def get_logger(logger_name: str, file: str | None = None) -> logging.Logger:
 
     # Formatter
     formatter = logging.Formatter(
-        "%(levelname)-9s %(message)-s\t\t %(asctime)-30s [%(name)s]"
+        "%(levelname)-9s %(message)-20s %(asctime)-30s [%(name)s]"
     )
 
     # Set formatter for handlers
