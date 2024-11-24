@@ -1,7 +1,6 @@
 from ..errors.api_exception import InvalidMethodType
 from api.logger import get_logger
-from pprint import pprint
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlencode, urlparse, parse_qs, urlunparse
 from dotenv import load_dotenv, find_dotenv
 import aiohttp, os
 
@@ -44,14 +43,43 @@ class TMDBApi:
         async with aiohttp.ClientSession() as session:
             return session
 
-    async def get(self, search_query: str | int = None) -> list:
-        """This method makes a **GET** request to the TMDB API with a search parameter"""
-        if isinstance(search_query, str) and search_query:
+    async def get(self, query: str = None) -> list:
+        """This method gets only one movie from the API"""
+        if isinstance(query, str) and query:
             # Adds '+' in between empty spaces
-            search_query = quote_plus(str(search_query))
+            query = quote_plus(str(query))
 
         # Use TMDB API URL, assuming `t` is the movie title
-        url = f"http://www.omdbapi.com/?t={search_query}&apikey={self.api_key}"
+        url = f"http://www.omdbapi.com/?t={query}&apikey={self.api_key}"
 
         async with self.session.get(url) as response:
+            return [await response.json()]
+
+    async def search(
+        self, query: str, of_type: str | None = None, year: str | None = None
+    ):
+        """This method searches for a query from the API"""
+
+        query = quote_plus(str(query.lower()))
+
+        url = f"http://www.omdbapi.com/?s={query}&apikey={self.api_key}"
+
+        # Parse the url
+        parsed_url = urlparse(url)
+
+        # Update query params
+        query_params = parse_qs(parsed_url.query)
+        if of_type:
+            query_params["type"] = of_type
+
+        if year:
+            query_params["y"] = year
+
+        # Build updated url query string
+        updated_query = urlencode(query_params, doseq=True)
+
+        # Recontruct the URL with the new query string
+        new_url = urlunparse(parsed_url._replace(query=updated_query))
+
+        async with self.session.get(new_url) as response:
             return [await response.json()]

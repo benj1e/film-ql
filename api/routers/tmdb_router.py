@@ -37,12 +37,22 @@ async def get_movie(q: int | str):
 
 
 @router.get("/search")
-async def search_movie(search: str, type: TypeParams = TypeParams.movie):
+async def search_movie(
+    search: str, of_type: TypeParams = TypeParams.movie, year: int | None = None
+):
     """
     ## Searches for movies with a query string
 
-    **Attributes:**\n
-    `search` -- Movie title to search for. (no default)\n
-    `type` -- specifies the type of result to return, whether to return a **series**, **movie** or an **episode**\n
-    `year` -- the year of release\n
+    :param search: Movie title to search for.
+    :param type: specifies the type of result to return, whether to return a **series**, **movie** or an **episode**
+    :param year: the year of release
     """
+
+    search_result = await api.search(search, of_type=of_type, year=year)
+    # if of_type:
+    #     search_result = await api.search(search, of_type=of_type)
+
+    # if year:
+    #     search_result = await api.search(search, year=year)
+
+    return search_result
