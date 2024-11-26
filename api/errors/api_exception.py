@@ -1,4 +1,4 @@
-from api.logger import get_logger
+from ..logger import get_logger
 import logging
 
 # Create a logger for exceptions

@@ -14,7 +14,7 @@ async def logging_middleware(request: Request, call_next):
     log_dict = {
         "url": request.url.path,
         "method": request.method,
-        "process-time": process_time,
+        "process-time": round(process_time, 3),
     }
 
     middleware_log.info(log_dict, extra=log_dict)

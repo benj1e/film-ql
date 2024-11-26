@@ -1,10 +1,11 @@
 from fastapi import APIRouter
 from ..handler.classes import TMDBApi
 from ..errors.api_exception import InvalidMethodType
-from api.logger import get_logger
+from ..logger import get_logger
 from contextlib import asynccontextmanager
 from enum import Enum
 from slugify import slugify
+import asyncio
 
 
 class TypeParams(str, Enum):
@@ -49,10 +50,4 @@ async def search_movie(
     """
 
     search_result = await api.search(search, of_type=of_type, year=year)
-    # if of_type:
-    #     search_result = await api.search(search, of_type=of_type)
-
-    # if year:
-    #     search_result = await api.search(search, year=year)
-
     return search_result

@@ -1,10 +1,10 @@
 from ..errors.api_exception import InvalidMethodType
-from api.logger import get_logger
+from ..logger import get_logger
 from urllib.parse import quote_plus, urlencode, urlparse, parse_qs, urlunparse
 from dotenv import load_dotenv, find_dotenv
 import aiohttp, os
 
-load_dotenv(find_dotenv())
+load_dotenv("api/.env") or load_dotenv(find_dotenv())
 logger = get_logger("TMDBApi", "omdb-api.log")
 
 

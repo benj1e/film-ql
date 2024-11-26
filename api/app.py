@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from .logger import get_logger
 from .routers.tmdb_router import router
@@ -15,10 +16,18 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_methods=["*"],
+    allow_origins=["http://localhost:7000"],
+    allow_credentials=True,
+    allow_headers=["*"],
+)
+
 app.add_middleware(BaseHTTPMiddleware, dispatch=logging_middleware)
 
 
-@app.get("/", status_code=418)
+@app.get("/")
 async def index():
     return {"message": "Hello World"}
 
